@@ -19,5 +19,9 @@
   "homepage": "https://github.com/nileshkum/ver3_Initial_app#readme",
   "devDependencies": {
     "nodemon": "^2.0.20"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2"
   }
 }
