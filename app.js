@@ -3,6 +3,9 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const errorControllers = require('./controllers/error');
+
+const db = require('./public/util/database');
 
 
 const app = express();
@@ -14,7 +17,6 @@ app.set('views', 'views/ejs');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-const errorControllers = require('./controllers/error');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
