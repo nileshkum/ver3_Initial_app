@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const User = require('./Model/user');
 
 const MongoDBStore = require('connect-mongodb-session')(session);
-const MONGODB_URI = 'mongodb+srv://Neel3004:3Nty0aASeBPbd204@cluster0.jour5.mongodb.net/shop?retryWrites=true&w=majority';
+
 
 const app = express();
 const store = new MongoDBStore({
