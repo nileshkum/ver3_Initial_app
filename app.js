@@ -7,15 +7,18 @@ const errorControllers = require('./controllers/error');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const User = require('./Model/user');
+const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const MongoDBStore = require('connect-mongodb-session')(session);
-const MONGODB_URI = 'mongodb+srv://Neel3004:3Nty0aASeBPbd204@cluster0.jour5.mongodb.net/shop?retryWrites=true&w=majority';
 
 const app = express();
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
 });
+
+const csrfProtection = csrf();
 
 
 app.set('view engine', 'ejs');
@@ -35,6 +38,9 @@ app.use(session({
     store: store
 }));
 
+app.use(csrfProtection);
+app.use(flash());
+
 app.use((req, res, next) => {
     if (!req.session.user) {
         return next();
@@ -50,6 +56,11 @@ app.use((req, res, next) => {
 
 })
 
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isAuthenticated;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -59,20 +70,6 @@ app.use(errorControllers.get404);
 
 mongoose.connect(MONGODB_URI)
     .then(result => {
-        User.findOne()
-            .then(user => {
-                if (!user) {
-                    const user = new User({
-                        name: 'Max',
-                        email: 'maxtest@mail.com',
-                        cart: {
-                            items: []
-                        }
-                    })
-                    user.save();
-                }
-            })
-
         app.listen(3000);
     })
     .catch(err => {
