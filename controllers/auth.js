@@ -1,5 +1,14 @@
 const bcrypt = require('bcryptjs');
 const User = require('../Model/user');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+    auth: {
+
+    }
+}));
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
@@ -87,6 +96,11 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then(result => {
                     res.redirect('/login');
+
+
+                })
+                .catch(err => {
+                    console.log(err);
                 })
 
         })
