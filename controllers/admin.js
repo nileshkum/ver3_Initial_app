@@ -1,4 +1,5 @@
 
+const product = require('../Model/product');
 const Product = require('../Model/product');
 
 exports.getAddProduct = (req, res, next) => {
@@ -73,16 +74,19 @@ exports.postEditProduct = (req, res, next) => {
 
     Product.findById(prodId)
         .then(product => {
+            if (product.userId.toString() !== req.user._id.toString()) {
+                return res.redirect('/');
+            }
             product.title = updatedTitle;
             product.price = updatePrice;
             product.description = updatedDescription;
             product.imageUrl = updatedImageUrl;
-            return product.save()
+            return product.save().then(results => {
+                console.log('Updated product');
+                res.redirect('/admin/products');
+            })
         })
-        .then(results => {
-            console.log('Updated product');
-            res.redirect('/admin/products');
-        })
+
         .catch(err => {
             console.log(err);
         });
@@ -91,7 +95,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
 
     const prodId = req.body.productId;
-    Product.findByIdAndRemove(prodId)
+    Product.deleteOne({ _id: prodId, userId: req.user._id })
         .then(result => {
             console.log('Product Deleted');
             res.redirect('/admin/products');
@@ -106,7 +110,7 @@ exports.postDeleteProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
 
-    Product.find()
+    Product.find({ userId: req.user._id })
         //mongoose special find query to pull specific fields
         // .select('title price -_id')
         // .populate('userId', 'name')
