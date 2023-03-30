@@ -1,5 +1,4 @@
-
-const product = require('../Model/product');
+const mongoose = require('mongoose');
 const Product = require('../Model/product');
 
 exports.getAddProduct = (req, res, next) => {
@@ -19,6 +18,7 @@ exports.postAddProduct = (req, res, next) => {
     const description = req.body.description;
 
     const product = new Product({
+
         title: title,
         price: price,
         description: description,
@@ -33,7 +33,11 @@ exports.postAddProduct = (req, res, next) => {
             res.redirect('/');
         })
         .catch(err => {
-            console.log(err);
+            // res.redirect('/500');
+
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 
 }
